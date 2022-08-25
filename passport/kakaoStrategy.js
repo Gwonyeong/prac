@@ -1,11 +1,12 @@
-const User = require('../models/user');
- 
+const {User} = require('../models');
+const passport = require("passport");
+const KakaoStrategy = require("passport-kakao").Strategy;
 module.exports = () => {
    passport.use(
       new KakaoStrategy(
          {
             clientID: process.env.KAKAO_ID, // 카카오 로그인에서 발급받은 REST API 키
-            callbackURL: '/auth/kakao/callback', // 카카오 로그인 Redirect URI 경로
+            callbackURL: '/api/auth/kakao/callback', // 카카오 로그인 Redirect URI 경로
          },
          /*
           * clientID에 카카오 앱 아이디 추가
@@ -13,6 +14,8 @@ module.exports = () => {
           * accessToken, refreshToken: 로그인 성공 후 카카오가 보내준 토큰
           * profile: 카카오가 보내준 유저 정보. profile의 정보를 바탕으로 회원가입
           */
+         //이 엑세스와 리프레시 토큰은 카카오 서비스를 이용하기 위한 토큰이기
+         //때문에 탈취를 막을 수 없다면 안쓰는게 나음.
          async (accessToken, refreshToken, profile, done) => {
             console.log('kakao profile', profile);
             try {
@@ -25,9 +28,11 @@ module.exports = () => {
                   done(null, exUser); // 로그인 인증 완료
                } else {
                   // 가입되지 않는 유저면 회원가입 시키고 로그인을 시킨다
+                  console.log(profile)
+                  console.log(profile._json.kakao_account.profile, profile.displayName,profile.id)
                   const newUser = await User.create({
-                     email: profile._json && profile._json.kakao_account_email,
-                     nick: profile.displayName,
+                     
+                     nickname: profile.displayName,
                      snsId: profile.id,
                      provider: 'kakao',
                   });
@@ -41,3 +46,5 @@ module.exports = () => {
       ),
    );
 }
+//인가코드를 받아서 거기로 이동시킨다. 프론트랑 연결 할 때.
+// 프론트 메인 url로 보낼 수 있어야 한다.

@@ -10,9 +10,10 @@ function add(a, b) {
     return a + b; //위 param 처럼 타입을 정의 해 놓으면 a와 b가 숫자타입인 것을
     //컴퓨터가 알 수 있음.
 }
+
 add()
 add(5,3); //add를 작성 해보세요!
-
+add()
 /** @type {string} */
 let name = "조권영"
 //이렇게 타입을 미리 작성도 할 수있음.

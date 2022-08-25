@@ -1,10 +1,12 @@
 const express = require("express");
 const passport = require("passport")
-
+const morgan = require("morgan");
 const passportConfig = require("./passport")
-
-const authRouter = require('./routes/auth');
-
+const { sequelize } = require("./models");
+const cookieParser = require("cookie-parser")
+const session = require("express-session")
+const indexRouter = require("./routes")
+const path = require("path")
 const app = express()
 passportConfig();
 //서명된 쿠키를 사용.
@@ -32,19 +34,26 @@ app.use(
       },
    }),
 );
-
+sequelize
+  .sync({ force: true })
+  .then(() => {
+    console.log("데이터베이스 연결 성공");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 //! express-session에 의존하므로 뒤에 위치해야 함
 app.use(passport.initialize()); // 요청 객체에 passport 설정을 심음
 app.use(passport.session()); // req.session 객체에 passport정보를 추가 저장
 
-const indexRouter = require("./routes")
+app.use(morgan('dev'))
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
+app.use('/', express.static(path.join(__dirname, 'public')));
 app.use("/api" , indexRouter)
 //* 라우터
-app.use('/auth', authRouter);
 
 app.listen(3000,()=> {
     console.log("서버 가동")
