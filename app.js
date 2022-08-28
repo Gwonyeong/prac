@@ -8,6 +8,7 @@ const session = require("express-session")
 const indexRouter = require("./routes")
 const path = require("path")
 const app = express()
+const schedule = require("./nodeScheduller")
 passportConfig();
 //서명된 쿠키를 사용.
 /**
@@ -58,3 +59,5 @@ app.use("/api" , indexRouter)
 app.listen(3000,()=> {
     console.log("서버 가동")
 })
+
+schedule

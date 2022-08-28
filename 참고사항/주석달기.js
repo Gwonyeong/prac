@@ -11,6 +11,7 @@ function add(a, b) {
     //컴퓨터가 알 수 있음.
 }
 
+()
 add()
 add(5,3); //add를 작성 해보세요!
 add()

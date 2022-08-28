@@ -35,11 +35,15 @@ const crawlingMusinsa = async(keyword) => {
                 
             })
         })
+        console.log(items)
         return items
     }
     return await parsing(keyword)
 }
 
+
+
 module.exports = {
-    crawlingMusinsa
+    crawlingMusinsa,
+    
 }
